@@ -1,0 +1,8 @@
+fatti manualmente:
+home
+hosts
+
+incollati:
+modules
+overlays
+pkgs
