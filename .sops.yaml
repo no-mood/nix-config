@@ -1,0 +1,37 @@
+keys:
+  # Users
+  - &users
+    - &mood 73FABF61ADB59209578630A4CE6022C64FD75AB3
+  # Hosts
+  - &hosts
+    - &tau age1drww5w0p6cmzkxvpu8tvnd5czzap8nyu9m9k89n2d3zsdw85tcnqhkgd7y
+    - &lyr age1umq7p376x79569alv8g6xald4hzcnm8hd0pxwdhna5p33k7a4p0sscqgnh
+    - &dra age19x76agynxnejz9svyqwt3krfntfx32lqfacm56knkxp6vl6r3vcs73seat
+
+creation_rules:
+  - path_regex: nixos/hosts/tau/secrets.ya?ml$
+    key_groups:
+      - age:
+          - *tau
+        pgp:
+          - *mood
+  - path_regex: nixos/hosts/lyr/secrets.ya?ml$
+    key_groups:
+      - age:
+          - *lyr
+        pgp:
+          - *mood
+  - path_regex: nixos/hosts/dra/secrets.ya?ml$
+    key_groups:
+      - age:
+          - *dra
+        pgp:
+          - *mood
+  - path_regex: nixos/hosts/common/secrets.ya?ml$
+    key_groups:
+      - age:
+          - *tau
+          - *lyr
+          - *dra
+        pgp:
+          - *mood

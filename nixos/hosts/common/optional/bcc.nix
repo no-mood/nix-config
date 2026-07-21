@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.bcc.enable = true;
+}
