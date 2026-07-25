@@ -12,7 +12,7 @@
     # https://codeberg.org/dnkl/foot/src/branch/master/foot.ini
     settings = {
       main = {
-        "dpi-aware" = lib.mkDefault "yes";
+        "dpi-aware" = "yes";
       };
       mouse = {
         hide-when-typing = "yes";

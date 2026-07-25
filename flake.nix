@@ -34,8 +34,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
-    zen-browser.url = "github:0xc000022070/zen-browser-flake";
+
     nixarr.url = "github:rasmus-kirk/nixarr";
     catppuccin.url = "github:catppuccin/nix";
 

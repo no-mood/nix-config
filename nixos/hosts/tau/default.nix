@@ -33,6 +33,7 @@
     ../common/optional/catppuccin.nix
     ../common/optional/bcc.nix
     ../common/optional/tailscale-client.nix
+    ../common/optional/zerotier-client.nix
     ../common/optional/caddy.nix
     ../common/optional/restic-client.nix
     ../common/optional/sunshine-server.nix

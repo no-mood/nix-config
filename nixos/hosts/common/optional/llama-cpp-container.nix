@@ -33,9 +33,9 @@ in
       { config, ... }:
       let
         llamaCppPackage =
-          if config.nixpkgs.config.rocmSupport then
+          if config.nixpkgs.config.rocmSupport or false then
             pkgs.llama-cpp-rocm
-          else if config.nixpkgs.config.cudaSupport then
+          else if config.nixpkgs.config.cudaSupport or false then
             pkgs.llama-cpp.override { cudaSupport = true; }
           else
             pkgs.llama-cpp;

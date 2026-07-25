@@ -37,6 +37,7 @@ in
     ../common/optional/bcc.nix
     ../common/optional/tailscale-client.nix
     ../common/optional/restic-client.nix
+    ../common/optional/zerotier-client.nix
 
     # Servers
     ../common/optional/caddy.nix
