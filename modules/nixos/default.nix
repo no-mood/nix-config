@@ -3,4 +3,5 @@
 {
   opencode-server = import ./opencode-server.nix;
   sensitive = import ./sensitive.nix;
+  hosts = import ./hosts.nix;
 }

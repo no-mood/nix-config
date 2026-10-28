@@ -55,5 +55,10 @@
       settings = {
       };
     };
+
+    # jq:  sed for JSON data.
+    jq = {
+      enable = true;
+    };
   };
 }

@@ -2,8 +2,12 @@
   description = "Mood's config, based on Misterio77";
 
   nixConfig = {
-    extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
-    extra-substituters = "https://devenv.cachix.org";
+    extra-trusted-public-keys = [
+      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+    ];
+    extra-substituters = [
+      "https://devenv.cachix.org"
+    ];
   };
 
   inputs = {
@@ -15,6 +19,8 @@
 
     # Nixpkgs unstable, keeping this for compatibility
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+
+    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
     # Home manager
     home-manager = {
@@ -50,12 +56,22 @@
     };
 
     dms = {
-      url = "github:AvengeMedia/DankMaterialShell/stable";
+      url = "github:duxlabs-dev/dux-shell/stable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     devenv = {
       url = "github:cachix/devenv";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    comin = {
+      url = "github:nlewo/comin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    attic = {
+      url = "github:zhaofengli/attic";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -67,19 +83,15 @@
 
   outputs =
     {
-      self,
       nixpkgs,
       ...
     }@inputs:
     let
-      inherit (self) outputs;
       # Supported systems for your flake packages, shell, etc.
       systems = [
         "aarch64-linux"
-        "i686-linux"
         "x86_64-linux"
         "aarch64-darwin"
-        "x86_64-darwin"
       ];
       # This is a function that generates an attribute by calling a function you
       # pass to it, with each system as an argument
@@ -88,7 +100,15 @@
     {
       # Your custom packages
       # Acessible through 'nix build', 'nix shell', etc
-      packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+      packages = forAllSystems (
+        system:
+        import ./pkgs (
+          import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          }
+        )
+      );
       # Formatter for your nix files, available through 'nix fmt'
       # Other options beside 'alejandra' include 'nixpkgs-fmt'
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
@@ -106,22 +126,40 @@
       # Available through 'nixos-rebuild --flake .#your-hostname'
       nixosConfigurations = {
         tau = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = { inherit inputs; };
           modules = [ ./nixos/hosts/tau ];
         };
         lyr = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = { inherit inputs; };
           modules = [ ./nixos/hosts/lyr ];
         };
         dra = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = { inherit inputs; };
           modules = [ ./nixos/hosts/dra ];
         };
         installer = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = { inherit inputs; };
           modules = [ ./nixos/hosts/installer ];
         };
       };
+
+      # Everything buildable for each system, built by `nix-fast-build` in the pre-push hook.
+      checks = forAllSystems (
+        system:
+        let
+          inherit (nixpkgs) lib;
+          prefix = p: lib.mapAttrs' (n: lib.nameValuePair "${p}-${n}");
+          hosts = lib.filterAttrs (
+            _: host: host.pkgs.stdenv.hostPlatform.system == system
+          ) inputs.self.nixosConfigurations;
+          packages = lib.filterAttrs (
+            _: pkg: lib.meta.availableOn { inherit system; } pkg
+          ) inputs.self.packages.${system};
+        in
+        prefix "nixos" (lib.mapAttrs (_: host: host.config.system.build.toplevel) hosts)
+        // prefix "package" packages
+        // prefix "devShell" inputs.self.devShells.${system}
+      );
 
       devShells = forAllSystems (
         system:

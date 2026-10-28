@@ -20,7 +20,9 @@ trap cleanup EXIT
 
 if git -C "$repo_root" rev-parse --verify public &>/dev/null; then
   git -C "$repo_root" worktree add "$worktree" public
-  git -C "$worktree" merge main --squash -X theirs
+  # public is a snapshot of main: take main's tree as-is instead of merging,
+  # which conflicts on renames/deletions.
+  git -C "$worktree" read-tree --reset -u main
 else
   git -C "$repo_root" worktree add --detach "$worktree" main
   git -C "$worktree" checkout --orphan public

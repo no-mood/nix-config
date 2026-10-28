@@ -7,7 +7,6 @@
 {
   # Install packages needed for custom greeting
   home.packages = with pkgs; [
-    krabby
     fortune
   ];
 
@@ -18,11 +17,9 @@
     interactiveShellInit = ''
       # Define custom fish_greeting function
       function fish_greeting
-        echo
-        ${pkgs.krabby}/bin/krabby random 1
+        ${pkgs.fastfetch}/bin/fastfetch
         echo
         ${pkgs.fortune}/bin/fortune computers
-        echo
       end
       devenv hook fish | source
     '';

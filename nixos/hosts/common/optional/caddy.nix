@@ -14,7 +14,7 @@
         plugins = [
           "github.com/caddy-dns/cloudflare@v0.2.4" # https://github.com/caddy-dns/cloudflare/tags
         ];
-        hash = "sha256-hEHgAG0F0ozHRAPuxEqLyTATBrE+pajeXDiSNwniorg=";
+        hash = "sha256-tubXIDCJnO2mvdnPlZclwDhNGaeeYLSt7lnni3+pXDo=";
       };
       environmentFile = config.sops.templates.caddy.path;
       globalConfig = ''

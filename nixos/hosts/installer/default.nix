@@ -53,11 +53,11 @@
     nssmdns4 = true;
     nssmdns6 = true;
     openFirewall = true;
-    publish = {
-      enable = true;
-      addresses = true;
-      workstation = true;
-      domain = true;
+    settings.publish = {
+      disable-publishing = false;
+      publish-addresses = true;
+      publish-workstation = true;
+      publish-domain = true;
     };
   };
 

@@ -1,5 +1,6 @@
 {
   pkgs,
+  config,
   ...
 }:
 {
@@ -13,8 +14,10 @@
     # Template-based. Add all users on this host
     ../common/global
     ../common/users/mood
+    ../common/optional/distributed-builds.nix
+    ../common/optional/harmonia-client.nix
 
-    ../common/optional/systemd-boot.nix
+    ../common/optional/limine.nix
     ./graphics.nix
     ../common/optional/drivers.nix
     #../common/optional/cuda.nix
@@ -33,6 +36,7 @@
     ../common/optional/catppuccin.nix
     ../common/optional/bcc.nix
     ../common/optional/tailscale-client.nix
+    ../common/optional/cloudflare-ddns.nix
     ../common/optional/zerotier-client.nix
     ../common/optional/caddy.nix
     ../common/optional/restic-client.nix
@@ -40,6 +44,8 @@
   ];
 
   boot = {
+    # Keep the same generation limit as systemd-boot on the 512 MiB ESP.
+    loader.limine.maxGenerations = 5;
     #kernelPackages = pkgs.linuxPackages;
     kernelPackages = pkgs.linuxPackages_latest;
   };

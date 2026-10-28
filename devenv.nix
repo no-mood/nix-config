@@ -68,31 +68,35 @@
     trim-trailing-whitespace.enable = true;
     nixfmt.enable = true;
 
-    # Check flake syntax and evaluation
-    nix-flake-check = {
+    # Evaluate and build all flake checks (hosts, packages, dev shell)
+    nix-fast-build = {
       enable = true;
-      name = "Nix flake check";
-      entry = "${pkgs.nix}/bin/nix flake check --impure";
+      name = "Build flake checks";
+      package = pkgs.nix-fast-build;
+      entry = "${lib.getExe pkgs.nix-fast-build} --flake .#checks.${pkgs.stdenv.hostPlatform.system} --skip-cached --impure --eval-workers 1 --fail-fast";
       files = "\\.(nix)$|^flake\\.lock$"; # Files ending with .nix or flake.lock
       excludes = [ "^devenv\\." ]; # Exclude devenv.* files
+      stages = [ "pre-push" ];
       language = "system";
       pass_filenames = false;
     };
 
-    # Block push to public branch if sensitive.nix contains real values
+    # Block pushing the public branch if the pushed commit still carries the
+    # files sync-public-repo strips (sensitive.nix, secrets, host keys).
     check-sensitive-on-public = {
       enable = true;
       name = "Block sensitive data on public branch";
       entry = toString (
         pkgs.writeShellScript "check-sensitive-on-public" ''
-          while read local_ref local_sha remote_ref remote_sha; do
-            branch=$(basename "$remote_ref")
-            if [ "$branch" != "public" ]; then continue; fi
-            if grep -qF 'giovanninicosia.dev' nixos/hosts/common/global/sensitive.nix 2>/dev/null; then
-              echo "ERROR: sensitive.nix contains real values. Run 'bash scripts/sync-public.sh' first."
-              exit 1
-            fi
-          done
+          [ "''${PRE_COMMIT_REMOTE_BRANCH##*/}" = public ] || exit 0
+          leaked=$(git ls-tree -r --name-only "''${PRE_COMMIT_TO_REF:-HEAD}" \
+            | grep -E '^nixos/hosts/common/global/sensitive\.nix$|(^|/)secrets\.yaml$|(^|/)ssh_host_[^/]*\.pub$' || true)
+          if [ -n "$leaked" ]; then
+            echo "ERROR: the public branch would publish:"
+            echo "$leaked"
+            echo "Update it with 'sync-public-repo' instead."
+            exit 1
+          fi
         ''
       );
       stages = [ "pre-push" ];

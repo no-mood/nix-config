@@ -50,7 +50,7 @@ in
 
         services.llama-cpp = {
           enable = true;
-          inherit port;
+          settings.port = port;
           package = llamaCppPackage;
           openFirewall = true;
           # MoE models with expert offloading via --n-cpu-moe 15

@@ -5,37 +5,31 @@
 }:
 {
   # Minimal gaming user
-  users.users.gaming =
-    let
-      factorio = pkgs.factorio.override {
-        username = "xmood";
-        token = "04e0e312e76549458060956b9af76d";
-      };
-    in
-    {
-      isNormalUser = true;
-      hashedPassword = "$y$j9T$obtIs4Ft1bT1B6KyxPpTq/$qwV5SaDoa/LLwPGfIoXL2dQg.8j7jftd5IzEx4HLsiD";
-      extraGroups = [
-        "networkmanager"
-        "gamemode"
-        "audio"
-        "video"
-      ];
-      packages = with pkgs; [
-        firefox
-        # factorio
-        (heroic.override {
-          extraPkgs = pkgs: [
-            gamescope
-            winetricks
-            wineWow64Packages.waylandFull
-          ];
-        })
-        prismlauncher
-        lutris
-        bottles
-      ];
-    };
+  users.users.gaming = {
+    isNormalUser = true;
+    hashedPassword = "$y$j9T$obtIs4Ft1bT1B6KyxPpTq/$qwV5SaDoa/LLwPGfIoXL2dQg.8j7jftd5IzEx4HLsiD";
+    extraGroups = [
+      "networkmanager"
+      "gamemode"
+      "audio"
+      "video"
+    ];
+    packages = with pkgs; [
+      firefox
+      (heroic.override {
+        extraPkgs = pkgs: [
+          gamescope
+          winetricks
+          wineWow64Packages.waylandFull
+        ];
+      })
+      epic-games-launcher
+      prismlauncher
+      lutris
+      bottles
+      vesktop
+    ];
+  };
 
   programs.gamemode.enable = true;
 
@@ -47,7 +41,13 @@
       mangohud
     ];
     protontricks.enable = true;
+    extraCompatPackages = with pkgs; [
+      proton-ge-bin
+    ];
   };
+
+  # Xbox controllers over Bluetooth; wired ones use the in-kernel xpad driver.
+  hardware.xpadneo.enable = true;
 
   programs = {
     gamescope = {

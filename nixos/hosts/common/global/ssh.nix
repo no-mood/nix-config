@@ -1,13 +1,12 @@
 {
   inputs,
-  outputs,
   lib,
   config,
   pkgs,
   ...
 }:
 let
-  hosts = lib.attrNames outputs.nixosConfigurations;
+  hosts = lib.attrNames inputs.self.nixosConfigurations;
 in
 {
   # Thanks @misterio77 for the idea

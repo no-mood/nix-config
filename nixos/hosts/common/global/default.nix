@@ -1,14 +1,9 @@
 {
-  config,
-  pkgs,
-  inputs,
-  outputs,
   lib,
   ...
 }:
 {
   imports = [
-    outputs.nixosModules.sensitive
     ./nix.nix
     ./nh.nix
     ./locale.nix
@@ -26,6 +21,8 @@
     ./fonts.nix
     ./avahi.nix
     ./sudo-rs.nix
+    ./comin.nix
+    ./hosts.nix
   ]
   ++ lib.optional (builtins.pathExists ./sensitive.nix) ./sensitive.nix;
 

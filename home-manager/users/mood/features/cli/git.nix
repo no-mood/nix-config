@@ -22,6 +22,15 @@
       color.ui = true;
       push.autoSetupRemote = true;
       http.postBuffer = 524288000; # https://stackoverflow.com/questions/6842687/the-remote-end-hung-up-unexpectedly-while-git-cloning
+
+      # Repos are synced across hosts with Syncthing, so never rewrite or prune
+      # the object store automatically: gc while another host holds a ref it
+      # does not know about would delete reachable objects.
+      gc = {
+        auto = 0;
+        pruneExpire = "never";
+      };
+      maintenance.auto = false;
     };
   };
 }

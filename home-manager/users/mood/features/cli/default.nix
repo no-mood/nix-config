@@ -11,6 +11,7 @@
     ./helix.nix
     ./direnv.nix
     ./ssh.nix
+    ./fastfetch.nix
     #./ranger.nix
     ./yazi.nix
     ./modern-unix.nix
@@ -26,7 +27,6 @@
     # Must have
     wget
     curl
-    fastfetch
     btop
     zip
     ffmpeg_6

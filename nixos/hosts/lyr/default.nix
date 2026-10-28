@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  config,
+  ...
+}:
 let
   wolInterface = "enp1s0"; # wakeonlan e8:ff:1e:d7:3a:72
   # Intel N100 iGPU render node — used for VA-API / ML acceleration (Immich, Jellyfin).
@@ -6,6 +10,11 @@ let
   accelerationDevices = [ "/dev/dri/renderD128" ];
 in
 {
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+  };
+
   imports = [
     # Import your generated (nixos-generate-config) hardware configuration
     ./hardware-configuration.nix
@@ -16,11 +25,16 @@ in
     # Template-based. Add all users on this host
     ../common/global
     ../common/users/mood
+    ../common/optional/distributed-builds.nix
+    ../common/optional/harmonia-client.nix
+    ../common/optional/harmonia-server.nix
 
     ../common/optional/systemd-boot.nix
     ./graphics.nix
     ../common/optional/docker.nix
     ../common/optional/tailscale-client.nix
+    ../common/optional/cloudflare-ddns.nix
+    ../common/optional/zerotier-client.nix
     ../common/optional/restic-client.nix
 
     (import ../common/optional/immich-container.nix { inherit accelerationDevices; })
@@ -39,6 +53,7 @@ in
     #../common/optional/postgresql-server.nix  # postgres now internal to each container
     ../common/optional/iperf-server.nix
     ../common/optional/opencode-server.nix
+    ../common/optional/catppuccin.nix
   ];
 
   boot = {

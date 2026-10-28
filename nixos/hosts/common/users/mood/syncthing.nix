@@ -6,31 +6,40 @@
 }:
 let
   user = "mood";
+  hostnames = builtins.attrNames config.myHosts;
+
+  # Build outputs are only ignored at the root of a project (<project>/ or
+  # <group>/<project>/), since the same names are also used for source
+  # directories (e.g. nixpkgs' python-modules/build).
+  buildOutputs = [
+    "result"
+    "result-*"
+    "target"
+    "dist"
+    "build"
+  ];
+  buildOutputPatterns = lib.concatMap (name: [
+    "(?d)/*/${name}"
+    "(?d)/*/*/${name}"
+  ]) buildOutputs;
 
   # Common folder configuration
   commonFolderConfig = {
-    devices = [
-      "tau"
-      "dra"
-      "lyr"
-    ];
+    devices = hostnames;
     ignorePerms = false;
     # Exclude build artifacts, caches, and generated files from all synced folders
     # Pattern format: https://docs.syncthing.net/users/ignoring.html
     ignorePatterns = [
       "(?d).devenv"
-      # Common build outputs
-      "(?d)result"
-      "(?d)result-*"
-      "(?d)target"
-      "(?d)dist"
-      "(?d)build"
       "(?d).direnv"
       # Node/Python caches
       "(?d)node_modules"
       "(?d).venv"
       "(?d)__pycache__"
-    ];
+      # Git repositories are synced in full; run mutating Git operations on
+      # one host at a time because Syncthing does not coordinate Git locks.
+    ]
+    ++ buildOutputPatterns;
   };
 
   # Directories to sync with common configuration
@@ -120,18 +129,10 @@ in
     # Declarative configuration
     settings = {
       options.urAccepted = -1;
-      # Configure your devices here:
-      devices = {
-        "tau" = {
-          id = config.sensitive.syncthingDevices.tau;
-        };
-        "dra" = {
-          id = config.sensitive.syncthingDevices.dra;
-        };
-        "lyr" = {
-          id = config.sensitive.syncthingDevices.lyr;
-        };
-      };
+      # Device IDs stay in sensitive config; the host list comes from myHosts.
+      devices = lib.genAttrs hostnames (host: {
+        id = config.sensitive.syncthingDevices.${host};
+      });
 
       # Syncthing folder configuration for user mood
       folders = folders;

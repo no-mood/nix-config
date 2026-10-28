@@ -243,7 +243,7 @@ window-rule {
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
     match app-id="Alacritty"
     match app-id="zen"
-    match app-id="com.mitchellh.ghostty"
+    match app-id="org.gnome.Ptyxis"
     match app-id="kitty"
     draw-border-with-background false
 }
@@ -270,14 +270,3 @@ recent-windows {
         Alt+Shift+grave { previous-window filter="app-id"; }
     }
 }
-
-// Include dms files
-include "dms/colors.kdl"
-include "dms/layout.kdl"
-include "dms/alttab.kdl"
-include "dms/binds.kdl"
-include "dms/outputs.kdl"
-include "dms/cursor.kdl"
-include "dms/windowrules.kdl"
-
-spawn-at-startup "dms" "run"

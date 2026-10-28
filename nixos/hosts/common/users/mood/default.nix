@@ -24,6 +24,7 @@ in
 
   users.users.${user} = {
     isNormalUser = true;
+    linger = true;
     hashedPasswordFile = config.sops.secrets."user/${user}/hashedPassword".path;
     description = user;
     shell = pkgs.fish;
@@ -49,6 +50,7 @@ in
       # Add your SSH public key(s) here, if you plan on using SSH to connect
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFxbhFz7wWM0ohZry834Xk1VRRTw91h4dFW2kYALVWGG mood@tau"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJjQ5EB8Uf/oxL+hqK7sgdlPAAw11Cvb5SoPDRgn20VF mood@dra"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM6eoK9bZjz0SV6SVZIZsrJfrT2CemNjmI0SR2h1Bv8h mood@lyr"
     ];
   };
 

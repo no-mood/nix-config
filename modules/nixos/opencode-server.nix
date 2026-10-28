@@ -57,6 +57,12 @@ in
       description = "Environment variables passed to the OpenCode service. Do not use this option for secrets.";
     };
 
+    path = lib.mkOption {
+      type = lib.types.listOf (lib.types.either lib.types.package lib.types.str);
+      default = [ ];
+      description = "Packages added to the OpenCode service PATH.";
+    };
+
     extraArgs = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -92,6 +98,7 @@ in
       wantedBy = [ "multi-user.target" ];
       wants = [ "network-online.target" ];
       after = [ "network-online.target" ];
+      path = cfg.path;
 
       environment = cfg.environment // {
         HOME = config.users.users.${cfg.user}.home;

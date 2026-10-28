@@ -41,6 +41,8 @@ pkgs/                        # Custom packages
 
 - **Multi-host NixOS and Home Manager** — shared global modules, opt-in features, per-host hardware and user configurations, overlays, and custom packages
 - **Provisioning and deployment** — declarative disk layouts with [disko](https://github.com/nix-community/disko), remote installation through [nixos-anywhere](https://github.com/nix-community/nixos-anywhere), and a custom installer ISO
+- **GitOps deployment** — [Comin](https://github.com/nlewo/comin) polls the private repository on each host; `main` switches that host's configuration, while `testing-<host>` tests it
+- **Builds and shared binary cache** — a git hook builds the configurations before push, with builds offloaded to remote builders and stored in the central [Harmonia](https://github.com/nix-community/harmonia) Nix cache, so the built configuration is already in the store when each host pulls
 - **Desktop environments** — GNOME and [niri](https://github.com/YaLTeR/niri), with DankMaterialShell/Noctalia, gaming, GPU, printing, and desktop application modules
 - **Self-hosted services** — reusable modules for Caddy, Immich, Jellyfin, Minecraft, Miniflux, Calibre, Nixarr, Restic, OpenCode, Ollama, llama.cpp, and other containerized services
 - **Backups** — Restic client/server modules, local and off-site repositories, aggregated system/service/user paths, database dumps, retention policies, and SOPS-managed credentials
@@ -71,7 +73,9 @@ nix-shell
 
 ## Deployment
 
-New hosts can be tested and provisioned remotely with [nixos-anywhere](https://github.com/nix-community/nixos-anywhere) through the interactive deployment script. A custom installer ISO can also be built from the `installer` configuration.
+Each host polls the private Git repository with Comin. The `main` branch switches that host's NixOS configuration; `testing-<host>` runs it with the `test` operation.
+
+To install a host, boot it from the custom installer ISO (written to USB or booted over the network). The installer enables SSH access as `root` for the configured public key. Then run `deploy-host <hostname>` from this repository: the script invokes [nixos-anywhere](https://github.com/nix-community/nixos-anywhere), generates the host's hardware configuration, and applies that host's [disko](https://github.com/nix-community/disko) partition layout. A custom installer ISO can be built from the `installer` configuration.
 
 ```bash
 deploy-host <hostname>
@@ -83,10 +87,12 @@ build-iso
 Secrets are managed with [sops-nix](https://github.com/Mic92/sops-nix), encrypted with Age keys derived from SSH host keys.
 
 ```bash
-# Edit secrets
+# Edit shared secrets or a host-specific secret file
+sops nixos/hosts/common/secrets.yaml
 sops nixos/hosts/<host>/secrets.yaml
 
 # After adding a new key, re-encrypt
+sops updatekeys nixos/hosts/common/secrets.yaml
 sops updatekeys nixos/hosts/<host>/secrets.yaml
 
 # Convert SSH host key to Age

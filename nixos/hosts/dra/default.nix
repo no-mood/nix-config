@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 let
   wolInterface = "enp4s0"; # wakeonlan 88:d7:f6:7f:83:c6
   # AMD RX 9060 XT ROCm devices passed to llama-cpp container
@@ -19,8 +22,11 @@ in
     ../common/global
     ../common/users/mood
     ../common/users/family
+    ../common/optional/distributed-builds.nix
+    ../common/optional/harmonia-client.nix
 
     ../common/optional/limine.nix
+    # ../common/optional/cachyos-kernel-specialisation.nix
     ./graphics.nix
     ../common/optional/drivers.nix
 
@@ -36,6 +42,7 @@ in
     ../common/optional/catppuccin.nix
     ../common/optional/bcc.nix
     ../common/optional/tailscale-client.nix
+    ../common/optional/cloudflare-ddns.nix
     ../common/optional/restic-client.nix
     ../common/optional/zerotier-client.nix
 
@@ -52,7 +59,6 @@ in
 
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
-    initrd.systemd.enable = true;
   };
 
   networking.hostName = "dra"; # Was "fehu".

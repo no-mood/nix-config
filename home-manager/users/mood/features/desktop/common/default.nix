@@ -4,7 +4,6 @@
     ./wayland-wm
 
     ./stylix.nix
-    ./catppuccin.nix
 
     # System
     ./gtk.nix
@@ -68,7 +67,6 @@
     #rustdesk-flutter
     remmina
 
-    zotero
     obsidian
   ];
 }

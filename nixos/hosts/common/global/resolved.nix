@@ -12,6 +12,15 @@
     "1.0.0.1" # Cloudflare secondary
   ];
 
+  # Bootstrap the clock without DNS when an incorrect RTC breaks DNS over TLS.
+  services.timesyncd = {
+    enable = true;
+    servers = [
+      "162.159.200.1"
+      "162.159.200.123"
+    ];
+  };
+
   services.resolved = {
     enable = true;
 

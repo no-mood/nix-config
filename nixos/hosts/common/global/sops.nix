@@ -12,6 +12,8 @@ in
 {
   imports = [ inputs.sops-nix.nixosModules.sops ];
 
+  sops.useSystemdActivation = true;
+
   environment.systemPackages = with pkgs; [
     sops
     ssh-to-age

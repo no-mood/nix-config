@@ -8,15 +8,11 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
-      "*" = {
-        addKeysToAgent = "yes";
-        serverAliveInterval = 120;
-        serverAliveCountMax = 3;
-        extraOptions = {
-          TCPKeepAlive = "yes";
-        };
-      };
+    settings."*" = {
+      AddKeysToAgent = "yes";
+      ServerAliveInterval = 120;
+      ServerAliveCountMax = 3;
+      TCPKeepAlive = "yes";
     };
   };
 

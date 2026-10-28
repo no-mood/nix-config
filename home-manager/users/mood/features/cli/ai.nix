@@ -12,4 +12,9 @@
   programs.claude-code = {
     enable = true;
   };
+
+  programs.herdr = {
+    enable = true;
+    settings = { };
+  };
 }
